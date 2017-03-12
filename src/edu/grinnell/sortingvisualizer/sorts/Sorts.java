@@ -57,6 +57,15 @@ public class Sorts {
     if (list.size() <= 1) {
       return pivotIndex;
     }
+    // second base case, if the list is size 2, there is no need to partition it into two separate array_lists 
+    if (hi - low == 2) {
+      System.out.println("List of size == 2 case reached");
+      // swap the two elements if needed
+      if (list.get(low).compareTo(list.get(low+1)) > 0) {
+        swappy(list,low,low+1);
+      }
+      return pivotIndex;
+    }
     // swap middle value and last value to start the sorting of subarrays
     if (pivotIndex != hi-1) {
       swappy(list, pivotIndex, hi-1);
@@ -91,6 +100,37 @@ public class Sorts {
     return i;
   }
   
+  
+  /**
+   * 
+   * @param list
+   * @param low
+   * @param hi
+   * @throws IOException
+   */
+  public static <T extends Comparable<T>> void quickSortHelper(ArrayList<T> list, int low, int hi) throws IOException {
+    if (hi - low >= 2) {
+      int pivotIndex = medianIndex(list, low, hi);
+      int midpoint = partition(list, low, hi, pivotIndex);
+      System.out.println("midpoint is " + midpoint);
+      // Sort the first subarray
+      if (low < midpoint) {
+        quickSortHelper(list, low, midpoint);
+
+      }
+      // Sort the second subarray
+      if (midpoint < hi) {
+        quickSortHelper(list, midpoint, hi);
+      }
+
+      return;
+    } else {
+      System.out.println("Base Case Reached");
+      return;
+    }
+  }
+  
+ 
   /**
    * list contains 2 SORTED lists, marked by low to mid and mid to hi
    * @param list
@@ -159,6 +199,38 @@ public class Sorts {
     return;
 
   }
+  
+  
+  /**
+   * For quicksort
+   * @param list
+   * @return
+   * @throws IOException 
+   */
+  public static <T extends Comparable<T>> int medianIndex (ArrayList<T> list, int low, int hi) throws IOException {
+    if (list == null) {
+      throw new IOException("Null list");
+    }
+    T first = list.get(low);
+    T middle = list.get((low+hi)/2);
+    T last = list.get(hi - 1);
+    // middle check for median
+    if (middle.compareTo(first) >= 0 && middle.compareTo(last) <= 0) {
+      //System.out.println("The median is middle val");
+      return (low+hi) / 2;
+    } 
+    // first check for median
+    else if (first.compareTo(middle) >= 0 && first.compareTo(last) <= 0) {
+      //System.out.println("The median is first val");
+      return low;
+    } 
+    // last is median
+    else {
+      //System.out.println("The median is last val");
+      return hi - 1;
+    }
+    
+  }
 
 
 
@@ -198,10 +270,6 @@ public class Sorts {
     return null;
   }
 
-
-
-
-  /* -------------------------- Main Sorting Algorithms --------------------------------------- */
   /**
    * 
    * @param arr
@@ -227,13 +295,58 @@ public class Sorts {
   }
 
   
-
-  public static <T extends Comparable<T>> List<SortEvent<T>> quickSort(T[] arr) {
-    // TODO: implement instrumented quickSort
+  /**
+   * 
+   * @param list
+   * @return
+   * @throws IOException
+   */
+  public static <T extends Comparable<T>> List<SortEvent<T>> quickSort(ArrayList<T> list) throws IOException {
+    // null case
+    if (list == null) {
+      throw new IOException("Array is null");
+    }
+    // base case
+    if (list.size() <=1) {
+      System.out.println("arrary has one value or is empty");
+      return null;
+    }
+    // recursive case
+    if (list.size() > 1) {
+      quickSortHelper(list, 0, list.size());
+    }
+    
     return null;
   }
 
-  public static <T extends Comparable<T>> List<SortEvent<T>> customSort(T[] arr) {
+  
+  /**
+   * 
+   * @param list
+   * @return
+   * @throws IOException
+   */
+  public static <T extends Comparable<T>> List<SortEvent<T>> bubbleSort(ArrayList<T> list) throws IOException {
+    if (list == null) {
+      throw new IOException("Null list passed to bubbleSort");
+    }
+    for (int i = 0; i < list.size(); i++) {
+      for (int j = i+1; j < list.size();j++) {
+        if (list.get(j).compareTo(list.get(i)) < 0) {
+          swappy(list, i, j);
+        }
+      }
+    }
+    return null;
+  }
+  
+  
+  /**
+   * 
+   * @param list
+   * @return
+   */
+  public static <T extends Comparable<T>> List<SortEvent<T>> customSort(ArrayList<T> list) {
     // TODO: implement your own custom sort
     return null;
   }

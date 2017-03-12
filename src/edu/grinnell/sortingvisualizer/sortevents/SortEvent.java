@@ -1,5 +1,8 @@
 package edu.grinnell.sortingvisualizer.sortevents;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public interface SortEvent<T> {
-    // TODO: fill in the SortEvent<T> interface definition
+    
 }
