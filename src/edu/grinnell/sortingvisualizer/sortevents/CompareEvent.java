@@ -1,5 +1,6 @@
 package edu.grinnell.sortingvisualizer.sortevents;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 // Sort Event = record indices of the array list while an event occurs (bridge between Sorts and Visualizer)
@@ -37,16 +38,16 @@ public class CompareEvent<T> implements SortEvent<T> {
    * @return
    */
   public <T extends Comparable<T>> List<Integer> getAffectedIndices(){
-    return null;
+    return Arrays.asList(this.index1, this.index2);
   }
   
   
   /**
-   * 
-   * @return
+   * Returns false since the list will not be changed
+   * @return 
    */
   public <T extends Comparable<T>> boolean isEmphasized() {
-    return true;
+    return false;
   }
   
 }

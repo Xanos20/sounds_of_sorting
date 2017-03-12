@@ -1,5 +1,7 @@
 package edu.grinnell.sortingvisualizer;
 
+import java.util.ArrayList;
+
 /**
  * A collection of indices into a Scale object.
  * These indices are the subject of the various sorting algorithms
@@ -7,11 +9,13 @@ package edu.grinnell.sortingvisualizer;
  */
 public class NoteIndices {
 
+    public Integer[] IndicesArr;
     /**
+     * Constructor
      * @param n the size of the scale object that these indices map into
      */
     public NoteIndices(int n) {
-        // TODO: fill me in
+        this.IndicesArr = new Integer[n];
     }
     
     /**
@@ -26,8 +30,7 @@ public class NoteIndices {
     
     /** @return the indices of this NoteIndices object */
     public Integer[] getNotes() { 
-        // TODO: fill me in
-        return null;
+        return this.IndicesArr; 
     }
     
     /**

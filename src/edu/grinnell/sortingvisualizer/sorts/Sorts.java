@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import edu.grinnell.sortingvisualizer.sortevents.CompareEvent;
 import edu.grinnell.sortingvisualizer.sortevents.SortEvent;
+import edu.grinnell.sortingvisualizer.sortevents.SwapEvent;
 
 public class Sorts {
 
@@ -241,16 +244,19 @@ public class Sorts {
    * @return
    */
   public static <T extends Comparable<T>> List<SortEvent<T>> selectionSort(ArrayList<T> list) {
+    List<SortEvent<T>> event_list = new ArrayList<SortEvent<T>>();
     for (int i = 0; i < list.size(); i++) {
       int minIndex = i;
       for (int j = i+1; j < list.size(); j++) {
+        event_list.add(new CompareEvent<T>(j, minIndex));
         if (list.get(j).compareTo(list.get(minIndex)) < 0 ) {
           minIndex = j;
         }
       }
+      event_list.add(new SwapEvent<T>(i, minIndex));
       swappy (list, i, minIndex);
     }
-    return null;
+    return event_list;
   }
 
 
@@ -260,14 +266,17 @@ public class Sorts {
    * @return
    */
   public static <T extends Comparable<T>> List<SortEvent<T>> insertionSort(ArrayList<T> list) {
+    List<SortEvent<T>> event_list = new ArrayList<SortEvent<T>>();
     for (int i = 0; i < list.size(); i++) {
       for(int j = i+1; 
           j > 0 && list.get(j-1).compareTo(list.get(j)) < 0;
           j--) {
+        event_list.add(new CompareEvent<T>(j-1,j));
         swappy(list, j-1, j);
+        event_list.add(new SwapEvent<T>(j-1,j));
       }
     }
-    return null;
+    return event_list;
   }
 
   /**
@@ -277,11 +286,11 @@ public class Sorts {
    * @throws IOException
    */
   public static <T extends Comparable<T>> List<SortEvent<T>> mergeSort(ArrayList<T> list) throws IOException {
-
+    List<SortEvent<T>> event_list = new ArrayList<SortEvent<T>>();
     if (list == null) {
       throw new IOException("Array is null");
     }
-
+    
     if (list.size() <= 1) {
       System.out.println("arrary has one value or is empty");
     }
@@ -302,6 +311,7 @@ public class Sorts {
    * @throws IOException
    */
   public static <T extends Comparable<T>> List<SortEvent<T>> quickSort(ArrayList<T> list) throws IOException {
+    List<SortEvent<T>> event_list = new ArrayList<SortEvent<T>>();
     // null case
     if (list == null) {
       throw new IOException("Array is null");
@@ -327,13 +337,17 @@ public class Sorts {
    * @throws IOException
    */
   public static <T extends Comparable<T>> List<SortEvent<T>> bubbleSort(ArrayList<T> list) throws IOException {
+    List<SortEvent<T>> event_list = new ArrayList<SortEvent<T>>();
     if (list == null) {
       throw new IOException("Null list passed to bubbleSort");
     }
+    
     for (int i = 0; i < list.size(); i++) {
       for (int j = i+1; j < list.size();j++) {
+        event_list.add(new CompareEvent<T> (i,j));
         if (list.get(j).compareTo(list.get(i)) < 0) {
           swappy(list, i, j);
+          event_list.add(new SwapEvent<T>(i,j));
         }
       }
     }
@@ -347,10 +361,16 @@ public class Sorts {
    * @return
    */
   public static <T extends Comparable<T>> List<SortEvent<T>> customSort(ArrayList<T> list) {
+    List<SortEvent<T>> event_list = new ArrayList<SortEvent<T>>();
     // TODO: implement your own custom sort
     return null;
   }
   
+  public static <T extends Comparable<T>> void eventSort(ArrayList<T> list, List<SortEvent<T>> events) {
+    for (int i = 0; i < events.size(); i++) {
+      events.get(i).apply(list);
+    }
+  }
   
 
   
