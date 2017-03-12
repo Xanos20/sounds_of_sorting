@@ -5,7 +5,7 @@ import java.util.List;
 
 public class CopyEvent<T> implements SortEvent<T> {
   private int index;
-  private T value;
+  private T value;// constructor?
   
   public CopyEvent (int i, T value) {
     this.index = i;

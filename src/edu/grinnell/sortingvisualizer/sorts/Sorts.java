@@ -2,12 +2,12 @@ package edu.grinnell.sortingvisualizer.sorts;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import edu.grinnell.sortingvisualizer.sortevents.CompareEvent;
 import edu.grinnell.sortingvisualizer.sortevents.SortEvent;
 import edu.grinnell.sortingvisualizer.sortevents.SwapEvent;
+import edu.grinnell.sortingvisualizer.sortevents.CopyEvent;
 
 public class Sorts {
 
@@ -24,6 +24,12 @@ public class Sorts {
     list.set(j,  temp);
   } 
   
+  
+  /**
+   * 
+   * @param list
+   * @return
+   */
   public static <T> String listtoString(ArrayList<T> list) {
     // make sure there is an if element
     if (list.size() == 0) {
@@ -42,6 +48,7 @@ public class Sorts {
 
   }
   
+  
   /**
    * partition is a helper function for Quick Sort, dividing the array list into 2 sub-lists
    * @param list
@@ -51,41 +58,47 @@ public class Sorts {
    * @return
    * @throws IOException 
    */
-  public static <T extends Comparable<T>> int partition(ArrayList<T> list, int low, int hi, int pivotIndex) throws IOException {
+  public static <T extends Comparable<T>> int partition(List<SortEvent<T>> event, ArrayList<T> list, int low, int hi, int pivotIndex) throws IOException {
     // null check
     if (list == null) {
-      throw new IOException("This is a null list");
+      throw new IOException("Null ArrayList passed to partition");
     }
     // base case, when size <= 1
-    if (list.size() <= 1) {
+    if (hi - low <= 1) {
       return pivotIndex;
     }
     // second base case, if the list is size 2, there is no need to partition it into two separate array_lists 
     if (hi - low == 2) {
       System.out.println("List of size == 2 case reached");
       // swap the two elements if needed
+      event.add(new CompareEvent<T>(low, low+1));
       if (list.get(low).compareTo(list.get(low+1)) > 0) {
+        event.add(new SwapEvent<T>(low,low+1));
         swappy(list,low,low+1);
       }
       return pivotIndex;
     }
-    // swap middle value and last value to start the sorting of subarrays
+    // swap pivot value and last value to start the sorting of subarrays
     if (pivotIndex != hi-1) {
+      event.add(new SwapEvent<T>(pivotIndex,hi-1));
       swappy(list, pivotIndex, hi-1);
       pivotIndex = hi-1;
       System.out.println("Swap the pivot and the last element");
     }
     int i = low;
+    // set j to second to last position since the last element has already been swapped
     int j = hi - 2;
  
     System.out.println("The pivot element is" + list.get(pivotIndex));
     
-    // sort 2 sub-arrays at the same time
+    // sort 2 sub-arrays at the same time until the pointers meet in the middle
     while (i < j) {
       if (list.get(i).compareTo(list.get(pivotIndex)) >= 0) { 
         while (j > i) {
           System.out.println("Updated i= " + i + " j = " + j);
+          event.add(new CompareEvent<T>(j, pivotIndex));
           if (list.get(j).compareTo(list.get(pivotIndex)) <= 0) {
+            event.add(new SwapEvent<T>(i,j));
             swappy(list, i,j);
             System.out.println(listtoString(list));
             break;  
@@ -99,6 +112,7 @@ public class Sorts {
     System.out.println("i = " + i);
     System.out.println("j = " + j);
     // put the pivot back into the middle position between the two sorted sub=arrays
+    event.add(new SwapEvent<T>(pivotIndex,j));
     swappy(list, pivotIndex, j);
     return i;
   }
@@ -111,20 +125,16 @@ public class Sorts {
    * @param hi
    * @throws IOException
    */
-  public static <T extends Comparable<T>> void quickSortHelper(ArrayList<T> list, int low, int hi) throws IOException {
-    if (hi - low >= 2) {
+  public static <T extends Comparable<T>> void quickSortHelper(List<SortEvent<T>> event, ArrayList<T> list, int low, int hi) throws IOException {
+    if (hi - low > 1) {
       int pivotIndex = medianIndex(list, low, hi);
-      int midpoint = partition(list, low, hi, pivotIndex);
+      int midpoint = partition(event, list, low, hi, pivotIndex);
       System.out.println("midpoint is " + midpoint);
       // Sort the first subarray
-      if (low < midpoint) {
-        quickSortHelper(list, low, midpoint);
+      quickSortHelper(event, list, low, midpoint);
 
-      }
       // Sort the second subarray
-      if (midpoint < hi) {
-        quickSortHelper(list, midpoint, hi);
-      }
+      quickSortHelper(event, list, midpoint, hi);
 
       return;
     } else {
@@ -140,11 +150,10 @@ public class Sorts {
    * @param low
    * @param mid
    * @param hi
-   * mid and hi are exclusive bounds and
-   *  low is an inclusive bound
+   * mid and hi are exclusive bounds and low is an inclusive bound
    * @return void
    */
-  private static <T extends Comparable<T>> void merge(ArrayList<T> list, int low, int mid, int hi) {
+  private static <T extends Comparable<T>> void merge(List<SortEvent<T>> event, ArrayList<T> list, int low, int mid, int hi) {
     // Create new array to store results of merge
     ArrayList<T> results = new ArrayList<T>();
     
@@ -156,14 +165,14 @@ public class Sorts {
       // if list[i] <= list[j] then add list[i] to results
       if (list.get(i).compareTo(list.get(j)) <= 0) {
         results.add(list.get(i));
-        // increment i & k to next position in first list and results
+        // increment i to next position in first list and results
         i++;
         
       }
       // if list[i] > list[j] then add list[i] to results
       if (list.get(i).compareTo(list.get(j)) > 0) {
         results.add(list.get(j));
-        // increment j & k to next position in second list and results
+        // increment j to next position in second list and results
         j++;
       } 
     }
@@ -179,6 +188,7 @@ public class Sorts {
     /* Copying the sorted buffer into the list */
     int k = 0;
     while (k < results.size()) {
+      event.add(new CopyEvent<T>(low+k, results.get(k)));
       list.set(low+k, results.get(k));
       k++;
     }  
@@ -192,12 +202,12 @@ public class Sorts {
    * @param low
    * @param hi
    */
-  private static <T extends Comparable<T>> void mergeSortHelper(ArrayList<T> list, int low, int hi) {
+  private static <T extends Comparable<T>> void mergeSortHelper(List<SortEvent<T>> event, ArrayList<T> list, int low, int hi) {
     int midpoint = low + (hi - low) / 2;
     if (hi > low + 1) {
-      mergeSortHelper(list, low, midpoint);
-      mergeSortHelper(list, midpoint, hi);
-      merge(list, low, midpoint, hi);
+      mergeSortHelper(event, list, low, midpoint);
+      mergeSortHelper(event, list, midpoint, hi);
+      merge(event, list, low, midpoint, hi);
     }
     return;
 
@@ -212,7 +222,7 @@ public class Sorts {
    */
   public static <T extends Comparable<T>> int medianIndex (ArrayList<T> list, int low, int hi) throws IOException {
     if (list == null) {
-      throw new IOException("Null list");
+      throw new IOException("Null list passed to medianIndex");
     }
     T first = list.get(low);
     T middle = list.get((low+hi)/2);
@@ -242,8 +252,12 @@ public class Sorts {
    * 
    * @param arr
    * @return
+   * @throws IOException 
    */
-  public static <T extends Comparable<T>> List<SortEvent<T>> selectionSort(ArrayList<T> list) {
+  public static <T extends Comparable<T>> List<SortEvent<T>> selectionSort(ArrayList<T> list) throws IOException {
+    if (list == null) {
+      throw new IOException("Null ArrayList passed to selectionSort");
+    }
     List<SortEvent<T>> event_list = new ArrayList<SortEvent<T>>();
     for (int i = 0; i < list.size(); i++) {
       int minIndex = i;
@@ -264,16 +278,19 @@ public class Sorts {
    * 
    * @param arr
    * @return
+   * @throws IOException 
    */
-  public static <T extends Comparable<T>> List<SortEvent<T>> insertionSort(ArrayList<T> list) {
+  public static <T extends Comparable<T>> List<SortEvent<T>> insertionSort(ArrayList<T> list) throws IOException {
+    // check for null case
+    if (list == null) {
+      throw new IOException("Null ArrayList passed to insertionSort");
+    }
     List<SortEvent<T>> event_list = new ArrayList<SortEvent<T>>();
-    for (int i = 0; i < list.size(); i++) {
-      for(int j = i+1; 
-          j > 0 && list.get(j-1).compareTo(list.get(j)) < 0;
-          j--) {
-        event_list.add(new CompareEvent<T>(j-1,j));
-        swappy(list, j-1, j);
-        event_list.add(new SwapEvent<T>(j-1,j));
+    for (int i = 1; i < list.size(); i++) {
+      for(int j = i; j > 0 && list.get(j-1).compareTo(list.get(j)) > 0; j--) {
+        event_list.add(new CompareEvent<T>(j,j-1));
+        swappy(list, j, j-1);
+        event_list.add(new SwapEvent<T>(j,j-1));
       }
     }
     return event_list;
@@ -288,15 +305,15 @@ public class Sorts {
   public static <T extends Comparable<T>> List<SortEvent<T>> mergeSort(ArrayList<T> list) throws IOException {
     List<SortEvent<T>> event_list = new ArrayList<SortEvent<T>>();
     if (list == null) {
-      throw new IOException("Array is null");
+      throw new IOException("Null ArrayList passed to mergeSort");
     }
     
     if (list.size() <= 1) {
-      System.out.println("arrary has one value or is empty");
+      System.out.println("ArraryList has one value or is empty");
     }
 
     if (list.size() > 1) {
-      mergeSortHelper(list,0,list.size());
+      mergeSortHelper(event_list, list,0,list.size());
     }
 
     return null;
@@ -323,7 +340,7 @@ public class Sorts {
     }
     // recursive case
     if (list.size() > 1) {
-      quickSortHelper(list, 0, list.size());
+      quickSortHelper(event_list, list, 0, list.size());
     }
     
     return null;
@@ -366,6 +383,12 @@ public class Sorts {
     return null;
   }
   
+  
+  /**
+   * 
+   * @param list
+   * @param events
+   */
   public static <T extends Comparable<T>> void eventSort(ArrayList<T> list, List<SortEvent<T>> events) {
     for (int i = 0; i < events.size(); i++) {
       events.get(i).apply(list);
