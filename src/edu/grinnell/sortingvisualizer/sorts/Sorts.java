@@ -3,6 +3,7 @@ package edu.grinnell.sortingvisualizer.sorts;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import edu.grinnell.sortingvisualizer.sortevents.CompareEvent;
 import edu.grinnell.sortingvisualizer.sortevents.SortEvent;
@@ -78,6 +79,7 @@ public class Sorts {
       }
       return pivotIndex;
     }
+    
     // swap pivot value and last value to start the sorting of subarrays
     if (pivotIndex != hi-1) {
       event.add(new SwapEvent<T>(pivotIndex,hi-1));
@@ -97,7 +99,7 @@ public class Sorts {
         while (j > i) {
           System.out.println("Updated i= " + i + " j = " + j);
           event.add(new CompareEvent<T>(j, pivotIndex));
-          if (list.get(j).compareTo(list.get(pivotIndex)) <= 0) {
+          if (list.get(j).compareTo(list.get(pivotIndex)) < 0) {
             event.add(new SwapEvent<T>(i,j));
             swappy(list, i,j);
             System.out.println(listtoString(list));
@@ -127,7 +129,8 @@ public class Sorts {
    */
   public static <T extends Comparable<T>> void quickSortHelper(List<SortEvent<T>> event, ArrayList<T> list, int low, int hi) throws IOException {
     if (hi - low > 1) {
-      int pivotIndex = medianIndex(list, low, hi);
+      Random r = new Random();
+      int pivotIndex = low + r.nextInt(hi-low);
       int midpoint = partition(event, list, low, hi, pivotIndex);
       System.out.println("midpoint is " + midpoint);
       // Sort the first subarray
@@ -227,20 +230,15 @@ public class Sorts {
     T first = list.get(low);
     T middle = list.get((low+hi)/2);
     T last = list.get(hi - 1);
-    // middle check for median
-    if (middle.compareTo(first) >= 0 && middle.compareTo(last) <= 0) {
-      //System.out.println("The median is middle val");
-      return (low+hi) / 2;
-    } 
-    // first check for median
-    else if (first.compareTo(middle) >= 0 && first.compareTo(last) <= 0) {
-      //System.out.println("The median is first val");
-      return low;
-    } 
-    // last is median
-    else {
-      //System.out.println("The median is last val");
-      return hi - 1;
+    if (first.compareTo(middle) >= 0) {
+      if (middle.compareTo(last) >= 0) { return (low+hi)/2;} 
+      else {
+        if (first.compareTo(last) >= 0) { return hi-1;} else {return low;}
+      }
+    } else {
+      if (middle.compareTo(last) >= 0) {
+        if (first.compareTo(last) >= 0) { return low;} else {return hi-1;}
+      } else { return (low+hi)/2;}
     }
     
   }
@@ -249,7 +247,7 @@ public class Sorts {
 
   /* -------- Sorting Algorithms ------------------------ */
   /**
-   * 
+   * selectionSort
    * @param arr
    * @return
    * @throws IOException 
@@ -275,7 +273,7 @@ public class Sorts {
 
 
   /**
-   * 
+   * insertionSort
    * @param arr
    * @return
    * @throws IOException 
@@ -298,7 +296,7 @@ public class Sorts {
   }
 
   /**
-   * 
+   * mergeSort
    * @param arr
    * @return
    * @throws IOException
@@ -323,33 +321,31 @@ public class Sorts {
 
   
   /**
-   * 
+   * quickSort
    * @param list
    * @return
    * @throws IOException
    */
   public static <T extends Comparable<T>> List<SortEvent<T>> quickSort(ArrayList<T> list) throws IOException {
     List<SortEvent<T>> event_list = new ArrayList<SortEvent<T>>();
-    // null case
     if (list == null) {
-      throw new IOException("Array is null");
+      throw new IOException("ArrayList passed to quickSort is null");
     }
-    // base case
     if (list.size() <=1) {
-      System.out.println("arrary has one value or is empty");
-      return null;
+      System.out.println("array has one value or is empty");
+      return event_list;
     }
-    // recursive case
     if (list.size() > 1) {
       quickSortHelper(event_list, list, 0, list.size());
     }
     
-    return null;
+    return event_list;
+    
   }
 
   
   /**
-   * 
+   * bubbleSort
    * @param list
    * @return
    * @throws IOException
@@ -372,17 +368,6 @@ public class Sorts {
     return null;
   }
   
-  
-  /**
-   * 
-   * @param list
-   * @return
-   */
-  public static <T extends Comparable<T>> List<SortEvent<T>> customSort(ArrayList<T> list) {
-    List<SortEvent<T>> event_list = new ArrayList<SortEvent<T>>();
-    // TODO: implement your own custom sort
-    return null;
-  }
   
   
   /**

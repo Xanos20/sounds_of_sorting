@@ -144,14 +144,15 @@ public class ControlPanel extends JPanel {
 
         List<SortEvent<Integer>> eventList = new java.util.ArrayList<>();
         try {
-          eventList = generateEvents(sorts.getSelectedItem().toString(), notes.getNotes());
+          eventList = generateEvents((String) sorts.getSelectedItem(), notes.getNotes());
         } catch (IOException e1) {
           // TODO Auto-generated catch block
           e1.printStackTrace();
         }
 
         // 2. Add in the compare events to the end of the list
-        for (int i = 0; i < notes.getNotes().size(); i++) {
+        
+        for (int i = 0; i < notes.getNotes().size() - 1; i++) {
           eventList.add(new CompareEvent<Integer>(i, i+1));
         }
         
