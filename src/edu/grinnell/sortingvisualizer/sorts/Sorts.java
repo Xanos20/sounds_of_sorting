@@ -286,11 +286,12 @@ public class Sorts {
       throw new IOException("Null ArrayList passed to insertionSort");
     }
     List<SortEvent<T>> event_list = new ArrayList<SortEvent<T>>();
-    for (int i = 1; i < list.size(); i++) {
+    for (int i = 1; i < list.size(); i++) {  
       for(int j = i; j > 0 && list.get(j-1).compareTo(list.get(j)) > 0; j--) {
         event_list.add(new CompareEvent<T>(j,j-1));
-        swappy(list, j, j-1);
         event_list.add(new SwapEvent<T>(j,j-1));
+        swappy(list, j, j-1);
+        
       }
     }
     return event_list;

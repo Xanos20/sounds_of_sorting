@@ -31,7 +31,9 @@ public class Scale {
      * @param notes the (MIDI) note values of this scale, assumed to be
      *        in ascending order
      */
-    public Scale(int[] notes) { this.notes = notes; }
+    public Scale(int[] notes) {
+      this.notes = notes;
+    }
     
     /**
      * @return the number of notes in the scale
@@ -46,4 +48,6 @@ public class Scale {
     public void playNote(int index, boolean emphasized) {
         instrument.noteOn(notes[index], emphasized ? EMPHASIZED_VELOCITY : REGULAR_VELOCITY);
     }
+    
+    
 }

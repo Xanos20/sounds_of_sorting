@@ -11,7 +11,7 @@ import java.util.Random;
 public class NoteIndices {
 
   // Fields
-  public Integer[] IndicesArr;
+  private ArrayList<Integer> IndicesArr;
   public boolean[] highlights;
 
 
@@ -20,7 +20,7 @@ public class NoteIndices {
    * @param n the size of the scale object that these indices map into
    */
   public NoteIndices(int n) {
-    this.IndicesArr = new Integer[n];
+    this.IndicesArr = new ArrayList<Integer>(n);
     this.highlights = new boolean[n];
   }
 
@@ -32,7 +32,7 @@ public class NoteIndices {
    * @param n the size of the scale object that these indices map into
    */
   public void initializeAndShuffle(int n) {
-    this.IndicesArr = new Integer[n];
+    //this.IndicesArr = new ArrayList<Integer>(n);
     this.highlights = new boolean[n];
     Random r = new Random();
     ArrayList<Integer> out = new ArrayList<Integer>();
@@ -43,12 +43,10 @@ public class NoteIndices {
       if (out.contains(randNum) == false) {
         out.add(randNum);
       }      
-    } 
+    }
     
     // put all elements of out into IndicesArr
-    for (int i = 0; i < n; i++) {
-      this.IndicesArr[i] = out.get(i);
-    }
+    this.IndicesArr = out;
     
     return;
     
@@ -56,7 +54,7 @@ public class NoteIndices {
 
 
   /** @return the indices of this NoteIndices object */
-  public Integer[] getNotes() { 
+  public ArrayList<Integer> getNotes() { 
     return this.IndicesArr; 
   }
 
