@@ -54,7 +54,7 @@ public class ControlPanel extends JPanel {
     case "Insertion":
       return Sorts.insertionSort(arr);
     case "Bubble":
-      return Sorts.customSort(arr);
+      return Sorts.bubbleSort(arr);
     case "Merge":
       return Sorts.mergeSort(arr);
     case("Quick"):
@@ -141,10 +141,14 @@ public class ControlPanel extends JPanel {
         isSorting = true;
         // TODO: fill me in
         // 1. Create the sorting events list
-
+        
+        ArrayList<Integer> copyIndices = new ArrayList<Integer>();
+        for (int i = 0; i < notes.getNotes().size(); i++) {
+          copyIndices.add(notes.getNotes().get(i));
+        }
         List<SortEvent<Integer>> eventList = new java.util.ArrayList<>();
         try {
-          eventList = generateEvents((String) sorts.getSelectedItem(), notes.getNotes());
+          eventList = generateEvents((String) sorts.getSelectedItem(), copyIndices);
         } catch (IOException e1) {
           // TODO Auto-generated catch block
           e1.printStackTrace();

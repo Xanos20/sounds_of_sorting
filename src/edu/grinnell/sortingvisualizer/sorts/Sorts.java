@@ -129,15 +129,15 @@ public class Sorts {
    */
   public static <T extends Comparable<T>> void quickSortHelper(List<SortEvent<T>> event, ArrayList<T> list, int low, int hi) throws IOException {
     if (hi - low > 1) {
-      Random r = new Random();
-      int pivotIndex = low + r.nextInt(hi-low);
+      
+      int pivotIndex = medianIndex(list, low, hi);
       int midpoint = partition(event, list, low, hi, pivotIndex);
       System.out.println("midpoint is " + midpoint);
       // Sort the first subarray
       quickSortHelper(event, list, low, midpoint);
 
       // Sort the second subarray
-      quickSortHelper(event, list, midpoint, hi);
+      quickSortHelper(event, list, midpoint+1, hi);
 
       return;
     } else {
@@ -315,7 +315,7 @@ public class Sorts {
       mergeSortHelper(event_list, list,0,list.size());
     }
 
-    return null;
+    return event_list;
 
   }
 
@@ -365,7 +365,7 @@ public class Sorts {
         }
       }
     }
-    return null;
+    return event_list;
   }
   
   

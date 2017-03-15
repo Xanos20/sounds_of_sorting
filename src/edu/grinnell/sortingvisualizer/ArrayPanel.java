@@ -39,10 +39,6 @@ public class ArrayPanel extends JPanel {
         barHeight = (int)((double) this.maxHeight * (double) (this.notes.getNotes().get(i)+1) / (double) numBars);
         System.out.println("Pos = " + i + " barHeight = " + barHeight);
         
-        // Drawing the outline of the bar
-        g.setColor(Color.BLACK);
-        //g.drawRect(barWidth*i, this.maxHeight - barHeight, barWidth, barHeight);
-        
         // Fill the bar with magenta (if not highlighted) or red (if highlighted)
         if (this.notes.highlights[i]) {
           g.setColor(Color.RED);
