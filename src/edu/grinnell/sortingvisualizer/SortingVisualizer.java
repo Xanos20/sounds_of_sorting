@@ -2,6 +2,7 @@ package edu.grinnell.sortingvisualizer;
 
 import java.awt.BorderLayout;
 
+
 import javax.swing.JFrame;
 
 public class SortingVisualizer {
@@ -12,6 +13,8 @@ public class SortingVisualizer {
     public static void main(String[] args) throws InterruptedException {        
         JFrame frame = new JFrame();
         frame.getContentPane().setLayout(new BorderLayout());
+        //Color backgroundColor = new Color(116,169,207);
+        //frame.getContentPane().setBackground(backgroundColor);
         NoteIndices notes = new NoteIndices(0);
         
         ArrayPanel   arrayPanel   = new ArrayPanel(notes, WIDTH, HEIGHT);

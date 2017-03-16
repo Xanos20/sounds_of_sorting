@@ -37,13 +37,14 @@ public class ArrayPanel extends JPanel {
         // barHeight is proportional to the index/ the max index
         // We added 1 because the lowest index is 0
         barHeight = (int)((double) this.maxHeight * (double) (this.notes.getNotes().get(i)+1) / (double) numBars);
-        System.out.println("Pos = " + i + " barHeight = " + barHeight);
-        
         // Fill the bar with magenta (if not highlighted) or red (if highlighted)
         if (this.notes.highlights[i]) {
           g.setColor(Color.RED);
+          this.notes.highlights[i] = false;
         } else {
-          g.setColor(Color.MAGENTA);
+          int barIndex = this.notes.getNotes().get(i);
+          Color customColor = new Color(230 - barIndex*(230/numBars), 240 - barIndex*(240/numBars), 245 - barIndex*(245/numBars)); 
+          g.setColor(customColor);
         }
         g.fillRect(barWidth*i, this.maxHeight - barHeight, barWidth, barHeight);
       }

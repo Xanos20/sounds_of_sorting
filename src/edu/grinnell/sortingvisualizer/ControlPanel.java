@@ -141,11 +141,13 @@ public class ControlPanel extends JPanel {
         isSorting = true;
         // TODO: fill me in
         // 1. Create the sorting events list
-        
+
+        // Create a copy of the notes
         ArrayList<Integer> copyIndices = new ArrayList<Integer>();
         for (int i = 0; i < notes.getNotes().size(); i++) {
           copyIndices.add(notes.getNotes().get(i));
         }
+
         List<SortEvent<Integer>> eventList = new java.util.ArrayList<>();
         try {
           eventList = generateEvents((String) sorts.getSelectedItem(), copyIndices);
@@ -155,12 +157,12 @@ public class ControlPanel extends JPanel {
         }
 
         // 2. Add in the compare events to the end of the list
-        
+
         for (int i = 0; i < notes.getNotes().size() - 1; i++) {
           eventList.add(new CompareEvent<Integer>(i, i+1));
         }
-        
-        
+
+
         // Make it final so that the variable can be accessed in run()
         final List<SortEvent<Integer>> events = eventList;
 
@@ -173,7 +175,7 @@ public class ControlPanel extends JPanel {
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
           private int index = 0;
-             
+
           @Override
           public void run() {
             if (index < events.size()) {
@@ -185,11 +187,10 @@ public class ControlPanel extends JPanel {
               //    affected indices logged in the event.
               // 4. Highlight those affected indices.
               for (int j = 0; j < e.getAffectedIndices().size(); j++) {
-               int affectedIndex = e.getAffectedIndices().get(j);
-               scale.playNote(affectedIndex, notes.isHighlighted(affectedIndex)); // what index are we supposed to use?
-               notes.highlightNote(affectedIndex);
+                int affectedIndex = e.getAffectedIndices().get(j);
+                scale.playNote(affectedIndex, notes.isHighlighted(affectedIndex)); // what index are we supposed to use?
+                notes.highlightNote(affectedIndex);
               }
-             
               panel.repaint();
             } else {
               this.cancel();
